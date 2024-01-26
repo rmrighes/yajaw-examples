@@ -78,13 +78,19 @@ def create_default_config(file_path):
         },
         "loggers": {"yajaw": {"handlers": ["file"], "level": "INFO", "propagate": True}},
     }
+
     with open(file_path, "w") as config_file:
         json.dump(default_config, config_file, indent=4)
 
 
 # Define your setup_logging function
 def setup_logging():
-    config_file_path = "config/logging_config.json"  # Specify the path to your config file
+
+    # Ensure logs directory exists
+    log_dir = os.path.join(os.path.dirname(os.path.abspath(__package__)), "logs")
+    os.makedirs(log_dir, exist_ok=True)
+
+    config_file_path = "config/logging.json"  # Specify the path to your config file
 
     # Check if the configuration file exists; if not, create it with default settings
     if not os.path.exists(config_file_path):
