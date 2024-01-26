@@ -4,9 +4,9 @@ Module with examples for synchronous functions.
 import logging
 import uuid
 
-from yajaw import context_id, jira
+from yajaw import jira
 
-from observability.logs import setup_logging
+from observability.logs import setup_logging, context_id
 
 setup_logging()
 

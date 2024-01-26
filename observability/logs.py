@@ -1,3 +1,4 @@
+from contextvars import ContextVar
 import gzip
 import json
 import logging
@@ -5,14 +6,17 @@ import logging.config
 import logging.handlers
 import os
 import re
+import uuid
 
-import yajaw
 
+context_id: ContextVar[uuid.UUID] = ContextVar(
+    "context_id", default=uuid.UUID("00000000-0000-0000-0000-000000000000")
+)
 
 # Define your ContextFilter class
 class ContextFilter(logging.Filter):
     def filter(self, record):
-        record.context_id = str(yajaw.context_id.get())
+        record.context_id = str(context_id.get())
         return True
     
 # Replace double quotes for single quotes in log message
@@ -42,6 +46,7 @@ class JsonFormatter(logging.Formatter):
             "asctime": self.formatTime(record, self.datefmt),
             "name": record.name,
             "levelname": record.levelname,
+            "funcname": record.funcName,
             "context_id": getattr(record, "context_id", "no_context"),
             "message": record.getMessage(),
         }
