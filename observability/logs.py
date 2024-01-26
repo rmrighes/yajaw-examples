@@ -14,6 +14,12 @@ class ContextFilter(logging.Filter):
     def filter(self, record):
         record.context_id = str(yajaw.context_id.get())
         return True
+    
+# Replace double quotes for single quotes in log message
+class QuotesFilter(logging.Filter):
+    def filter(self, record):
+        record.msg = record.msg.replace('\"', '\'')
+        return record
 
 
 # Define your PIIFilter class
@@ -64,19 +70,24 @@ def create_default_config(file_path):
         "filters": {
             "context": {"()": "observability.logs.ContextFilter"},
             "piifilter": {"()": "observability.logs.PIIFilter"},
+            "quotes":{"()": "observability.logs.QuotesFilter"}
         },
         "handlers": {
             "file": {
                 "class": "logging.handlers.RotatingFileHandler",
                 "level": "DEBUG",
                 "formatter": "json",
-                "filters": ["context", "piifilter"],
+                "filters": ["context", "piifilter", "quotes"],
                 "filename": "logs/example.log",
                 "maxBytes": 10485760,
                 "backupCount": 10,
             }
         },
-        "loggers": {"yajaw": {"handlers": ["file"], "level": "INFO", "propagate": True}},
+        "loggers": {
+            "yajaw": {"handlers": ["file"], "level": "INFO", "propagate": True},
+            "example": {"handlers": ["file"], "level": "INFO", "propagate": True},
+            "httpx": {"handlers": ["file"], "level": "INFO", "propagate": True},
+        },
     }
 
     with open(file_path, "w") as config_file:
@@ -85,7 +96,6 @@ def create_default_config(file_path):
 
 # Define your setup_logging function
 def setup_logging():
-
     # Ensure logs directory exists
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__package__)), "logs")
     os.makedirs(log_dir, exist_ok=True)

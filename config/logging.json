@@ -11,6 +11,9 @@
         },
         "piifilter": {
             "()": "observability.logs.PIIFilter"
+        },
+        "quotes": {
+            "()": "observability.logs.QuotesFilter"
         }
     },
     "handlers": {
@@ -20,7 +23,8 @@
             "formatter": "json",
             "filters": [
                 "context",
-                "piifilter"
+                "piifilter",
+                "quotes"
             ],
             "filename": "logs/example.log",
             "maxBytes": 10485760,
@@ -29,6 +33,20 @@
     },
     "loggers": {
         "yajaw": {
+            "handlers": [
+                "file"
+            ],
+            "level": "INFO",
+            "propagate": true
+        },
+        "example": {
+            "handlers": [
+                "file"
+            ],
+            "level": "INFO",
+            "propagate": true
+        },
+        "httpx": {
             "handlers": [
                 "file"
             ],
