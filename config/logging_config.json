@@ -1,0 +1,39 @@
+{
+    "version": 1,
+    "formatters": {
+        "json": {
+            "()": "observability.logs.JsonFormatter"
+        }
+    },
+    "filters": {
+        "context": {
+            "()": "observability.logs.ContextFilter"
+        },
+        "piifilter": {
+            "()": "observability.logs.PIIFilter"
+        }
+    },
+    "handlers": {
+        "file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "DEBUG",
+            "formatter": "json",
+            "filters": [
+                "context",
+                "piifilter"
+            ],
+            "filename": "logs/example.log",
+            "maxBytes": 10485760,
+            "backupCount": 10
+        }
+    },
+    "loggers": {
+        "yajaw": {
+            "handlers": [
+                "file"
+            ],
+            "level": "INFO",
+            "propagate": true
+        }
+    }
+}
